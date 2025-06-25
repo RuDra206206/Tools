@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ImageCompressorPro</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+    #results { margin-top: 20px; padding: 10px; border: 1px solid #ddd; }
+    button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>ImageCompressorPro</h1>
+  <input type="file" id="upload" accept="image/*">
+  <div id="results" style="display: none;">
+    <h2>Compression Results</h2>
+    <p id="file-name"></p>
+    <p id="original-size"></p>
+    <p id="compressed-size"></p>
+    <button id="download">Download Compressed Image</button>
+  </div>
+
+  <script>
+    const upload = document.getElementById("upload");
+    const downloadBtn = document.getElementById("download");
+    const resultsDiv = document.getElementById("results");
+    let compressedBlob = null;
+
+    // Step 1: Handle image upload
+    upload.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Display original file info
+      document.getElementById("file-name").textContent = file.name;
+      document.getElementById("original-size").textContent = 
+        `Original: ${(file.size / 1024).toFixed(2)} KB`;
+
+      // Compress the image
+      compressedBlob = await compressImage(file);
+      const compressionRatio = ((file.size - compressedBlob.size) / file.size * 100).toFixed(0);
+
+      // Display compressed file info
+      document.getElementById("compressed-size").textContent = 
+        `Compressed: ${(compressedBlob.size / 1024).toFixed(2)} KB (${compressionRatio}% smaller)`;
+      resultsDiv.style.display = "block";
+    });
+
+    // Step 2: Compress image using Canvas
+    async function compressImage(file, quality = 0.7) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Reduce dimensions by 50% (optional)
+            canvas.width = img.width * 0.5;
+            canvas.height = img.height * 0.5;
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Convert to Blob (compressed)
+            canvas.toBlob(
+              (blob) => resolve(blob),
+              file.type || "image/jpeg",
+              quality
+            );
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Step 3: Download compressed image
+    downloadBtn.addEventListener("click", () => {
+      if (!compressedBlob) return;
+      const url = URL.createObjectURL(compressedBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `compressed_${upload.files[0].name}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
