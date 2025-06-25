@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ImageCompressorPro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    #results {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 20px auto;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+      border-radius: 5px;
+    }
+
+    .rating-buttons {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .rating-buttons button.good {
+      background-color: #4CAF50;
+    }
+
+    .rating-buttons button.bad {
+      background-color: #f44336;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ImageCompressorPro</h1>
+
+  <input type="file" id="upload" accept="image/*" />
+  <div id="results" style="display: none;">
+    <h2>Compression Results</h2>
+    <p id="file-name"></p>
+    <p id="original-size"></p>
+    <p id="compressed-size"></p>
+    <button onclick="alert('Download functionality coming soon!')">Download</button>
+  </div>
+
+  <div class="rating-buttons">
+    <h2>Rate This App</h2>
+    <button class="good" onclick="rateApp('Good 👍')">Good</button>
+    <button class="bad" onclick="rateApp('Bad 👎')">Bad</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    // Fake compression for demo
+    document.getElementById('upload').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const originalSize = (file.size / 1024).toFixed(2);
+        const compressedSize = (originalSize * 0.6).toFixed(2); // simulate compression
+
+        document.getElementById('file-name').textContent = "File: " + file.name;
+        document.getElementById('original-size').textContent = "Original Size: " + originalSize + " KB";
+        document.getElementById('compressed-size').textContent = "Compressed Size: " + compressedSize + " KB";
+
+        document.getElementById('results').style.display = "block";
+      }
+    });
+
+    function rateApp(rating) {
+      document.getElementById('result').textContent = "You rated this app as: " + rating;
+    }
+  </script>
+
+</body>
+</html>
