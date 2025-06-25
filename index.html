@@ -1,73 +1,327 @@
+
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Tools | Rudra</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #333;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    main {
-      max-width: 800px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #333;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 1rem 0;
-    }
-    a {
-      text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      color: #666;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Compressor - KB/MB Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 4px;
+            display: none;
+        }
+        .file-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .compression-options {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 4px;
+        }
+        .slider-container {
+            margin: 15px 0;
+        }
+        .slider {
+            width: 100%;
+        }
+        .preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Photo Compressor & Size Converter</h1>
+        
+        <div class="input-group">
+            <label for="fileInput">Select an image file:</label>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        
+        <div class="preview">
+            <img id="imagePreview" src="#" alt="Preview" style="display: none;">
+        </div>
+        
+        <div class="file-info" id="fileInfo"></div>
+        
+        <div class="compression-options">
+            <h3>Compression Options</h3>
+            <div class="slider-container">
+                <label for="qualitySlider">Compression Quality:</label>
+                <input type="range" id="qualitySlider" class="slider" min="0" max="1" step="0.01" value="0.8">
+                <span id="qualityValue">80%</span>
+            </div>
+            
+            <div class="input-group">
+                <label for="maxSizeUnit">Target Size Unit:</label>
+                <select id="maxSizeUnit">
+                    <option value="KB">KB</option>
+                    <option value="MB">MB</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="maxSize">Target Size (optional):</label>
+                <input type="number" id="maxSize" placeholder="Enter target size" step="0.01" min="0">
+            </div>
+            
+            <button id="compressBtn">Compress Image</button>
+        </div>
+        
+        <div class="input-group">
+            <h3>Size Conversion</h3>
+            <label for="sizeValue">Size Value:</label>
+            <input type="number" id="sizeValue" placeholder="Enter size value" step="0.01" min="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="fromUnit">Convert From:</label>
+            <select id="fromUnit">
+                <option value="KB">Kilobytes (KB)</option>
+                <option value="MB">Megabytes (MB)</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="toUnit">Convert To:</label>
+            <select id="toUnit">
+                <option value="MB">Megabytes (MB)</option>
+                <option value="KB">Kilobytes (KB)</option>
+            </select>
+        </div>
+        
+        <button id="convertBtn">Convert Units</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div id="compressedResult" class="result" style="display: none;">
+            <h3>Compression Result</h3>
+            <div id="compressedInfo"></div>
+            <a id="downloadLink" href="#" download="compressed.jpg">Download Compressed Image</a>
+        </div>
+    </div>
 
-<header>
-  <h1>स्वागत है - Rudra के Tools पेज पर</h1>
-</header>
+    <script>
+        // File input and preview
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileSizeKB = file.size / 1024;
+                const fileSizeMB = fileSizeKB / 1024;
+                
+                document.getElementById('fileInfo').innerHTML = `
+                    <strong>Original File Info:</strong><br>
+                    Name: ${file.name}<br>
+                    Size: ${fileSizeKB.toFixed(2)} KB (${fileSizeMB.toFixed(2)} MB)<br>
+                    Type: ${file.type}
+                `;
+                
+                // Auto-fill the conversion fields
+                document.getElementById('sizeValue').value = fileSizeKB.toFixed(2);
+                document.getElementById('fromUnit').value = 'KB';
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('imagePreview');
+                    img.src = event.target.result;
+                    img.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
 
-<main>
-  <h2>मेरे टूल्स</h2>
-  <ul>
-    <li><a href="img-compress.html">✅ Image Compressor Tool</a></li>
-    <!-- यहां आप आगे और टूल्स जोड़ सकते हैं -->
-  </ul>
-</main>
+        // Quality slider
+        document.getElementById('qualitySlider').addEventListener('input', function() {
+            document.getElementById('qualityValue').textContent = 
+                Math.round(this.value * 100) + '%';
+        });
 
-<footer>
-  &copy; 2025 Rudra | GitHub Pages द्वारा होस्ट किया गया
-</footer>
+        // Unit conversion
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const sizeValue = parseFloat(document.getElementById('sizeValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (isNaN(sizeValue) || sizeValue <= 0) {
+                alert('Please enter a valid positive number');
+                return;
+            }
+            
+            let convertedValue;
+            if (fromUnit === 'KB' && toUnit === 'MB') {
+                convertedValue = sizeValue / 1024;
+            } else if (fromUnit === 'MB' && toUnit === 'KB') {
+                convertedValue = sizeValue * 1024;
+            } else {
+                convertedValue = sizeValue; // Same unit
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <strong>Conversion Result:</strong><br>
+                ${sizeValue.toFixed(2)} ${fromUnit} = ${convertedValue.toFixed(2)} ${toUnit}
+            `;
+        });
 
+        // Image compression
+        document.getElementById('compressBtn').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const quality = parseFloat(document.getElementById('qualitySlider').value);
+            const maxSize = parseFloat(document.getElementById('maxSize').value);
+            const maxSizeUnit = document.getElementById('maxSizeUnit').value;
+            
+            if (!fileInput.files[0]) {
+                alert('Please select an image file first');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Calculate new dimensions (optional: maintain aspect ratio)
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // You could add resizing logic here if desired
+                    // const maxWidth = 800;
+                    // if (width > maxWidth) {
+                    //     height = (maxWidth / width) * height;
+                    //     width = maxWidth;
+                    // }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to JPEG with specified quality
+                    canvas.toBlob(function(blob) {
+                        // Check if target size is specified
+                        if (!isNaN(maxSize) && maxSize > 0) {
+                            const targetSizeBytes = maxSizeUnit === 'KB' ? maxSize * 1024 : maxSize * 1024 * 1024;
+                            adjustQualityToTargetSize(canvas, blob, targetSizeBytes, quality);
+                        } else {
+                            finalizeCompression(blob, quality);
+                        }
+                    }, 'image/jpeg', quality);
+                };
+            };
+            
+            reader.readAsDataURL(file);
+        });
+
+        function adjustQualityToTargetSize(canvas, originalBlob, targetSizeBytes, initialQuality) {
+            let quality = initialQuality;
+            let minQuality = 0;
+            let maxQuality = 1;
+            let blob = originalBlob;
+            const MAX_ITERATIONS = 10;
+            let iteration = 0;
+            
+            function checkSize() {
+                iteration++;
+                if (iteration >= MAX_ITERATIONS) {
+                    finalizeCompression(blob, quality);
+                    return;
+                }
+                
+                if (blob.size <= targetSizeBytes || quality <= 0.1) {
+                    finalizeCompression(blob, quality);
+                } else {
+                    // Adjust quality and try again
+                    quality = Math.max(0.1, quality - 0.1);
+                    canvas.toBlob(function(newBlob) {
+                        blob = newBlob;
+                        checkSize();
+                    }, 'image/jpeg', quality);
+                }
+            }
+            
+            checkSize();
+        }
+
+        function finalizeCompression(blob, quality) {
+            const compressedUrl = URL.createObjectURL(blob);
+            const compressedSizeKB = blob.size / 1024;
+            const compressedSizeMB = compressedSizeKB / 1024;
+            
+            document.getElementById('compressedInfo').innerHTML = `
+                <strong>Compressed File Info:</strong><br>
+                Size: ${compressedSizeKB.toFixed(2)} KB (${compressedSizeMB.toFixed(2)} MB)<br>
+                Quality: ${Math.round(quality * 100)}%
+            `;
+            
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = compressedUrl;
+            downloadLink.style.display = 'block';
+            
+            document.getElementById('compressedResult').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
